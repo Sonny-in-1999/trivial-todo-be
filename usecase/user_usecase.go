@@ -29,6 +29,11 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	}
 
 	newUser := model.User{Email: user.Email, Password: string(hash)}
+	err = uu.ur.CreateUser(&newUser)
+	if err != nil {
+		return model.UserResponse{}, err
+	}
+
 	userRes := model.UserResponse{ID: newUser.ID, Email: newUser.Email}
 	return userRes, nil
 }
@@ -39,8 +44,7 @@ func (uu *userUsecase) Login(user model.User) (string, error) { // string: jwt í
 		return "", err
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(existUser.Password), []byte(user.Password))
-	if err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(existUser.Password), []byte(user.Password)); err != nil {
 		return "", err
 	}
 
