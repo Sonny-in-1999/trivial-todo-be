@@ -6,6 +6,7 @@ import (
 	"trivial-todo-be/repository"
 	"trivial-todo-be/router"
 	"trivial-todo-be/usecase"
+	"trivial-todo-be/validator"
 )
 
 func main() {
@@ -14,8 +15,11 @@ func main() {
 	userRepository := repository.NewUserRepository(db)
 	taskRepository := repository.NewTaskRepository(db)
 
-	userUsecase := usecase.NewUserUsecase(userRepository)
-	taskUsecase := usecase.NewTaskUsecase(taskRepository)
+	userValidator := validator.NewUserValidator()
+	taskValidator := validator.NewTaskValidator()
+
+	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
+	taskUsecase := usecase.NewTaskUsecase(taskRepository, taskValidator)
 
 	userController := controller.NewUserController(userUsecase)
 	taskController := controller.NewTaskController(taskUsecase)
